@@ -9,6 +9,13 @@ Blockchain block listener for transaction notifications
 
 Omniaudience works by getting every block your node receives and checks if there's a transaction for a saved wallet address and then notifies to your desired endpoint.
 
+### Installation.
+
+This is a [Meteor](http://www.meteor.com) project. So it basically is installed the same way as any meteor project. Using [MUP](https://github.com/zodern/meteor-up) is recommended for faster deploying.
+A Mongo Server is required for production usage. You have to set the Mongo_URL Environment Variable
+
+    MONGO_URL=mongodb://username:password@your-mongo-server-here.example.com:27015/database
+
 ### Subscribe address
 
 To start watching and address, POST data to your server, sending an address, notifyUrl and currency code.
