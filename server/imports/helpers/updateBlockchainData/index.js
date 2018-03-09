@@ -39,8 +39,7 @@ export default async function(currencyCode, height) {
           CurrenciesDetails[currency.name.toLowerCase()]
         )
         const spent = !!vout.spentTxId
-        const wallet = Wallets.findOne({address: address})
-        console.log({address: address})
+        const wallet = Wallets.findOne({address})
         if (wallet) {
           console.log('\nTransaction found to', address, value, '\n')
           Transactions.insert({
