@@ -16,7 +16,7 @@ export default async function(currencyCode, height) {
     }
     await rp({
       uri: wallet.notifyUrl,
-      simple: true,
+      method: 'POST',
       json: true,
       body: {
         address: wallet.address,
