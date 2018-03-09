@@ -1,7 +1,7 @@
 # Omniaudience
 
-\[!\[npm version\](https://badge.fury.io/js/react-apollo-decorators.svg)\](https://badge.fury.io/js/react-apollo-decorators)
-\[!\[js-standard-style\](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)\](http://standardjs.com/)
+[![npm version](https://badge.fury.io/js/react-apollo-decorators.svg)](https://badge.fury.io/js/react-apollo-decorators)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
 Blockchain block listener for transaction notifications
 
@@ -53,9 +53,11 @@ Notifications will send you a POST request to the endpoint specified to the wall
 ```json
 {
   "address": "1v5oc8QTdz4GUrvvWxGd1FaXDU62nkvRY",
-  "amount": 998919, // amount in satoshis
-  "confirmed": false // true if the transaction is confirmed
+  "amount": 998919,
+  "confirmed": false
 }
 ```
+
+Amount is in satoshis format.
 
 Basically you will get 2 notifications for every transaction. The first one is when a transactions appears on a block and a second one when the transaction has been confirmed.
