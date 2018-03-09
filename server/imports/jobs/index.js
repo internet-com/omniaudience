@@ -1,0 +1,21 @@
+import {Meteor} from 'meteor/meteor'
+import runJob from './runJob'
+import watchBlocks from './watchBlocks'
+const isLocal = true
+
+const jobs = [
+  {
+    job: watchBlocks,
+    waitTime: 1000,
+    timeout: 5 * 60 * 1000, // 5 minutos
+    name: 'watchBlocks',
+    should: 'watchBlocks'
+  }
+]
+
+Meteor.setTimeout(() => {
+  console.log('Starting jobs...')
+  for (const job of jobs) {
+    runJob(job)
+  }
+}, isLocal ? 100 : 10 * 1000)

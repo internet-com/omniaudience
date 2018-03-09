@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-class-properties",
+    [
+      "module-resolver",
+      {
+        "root": ["./"],
+        "alias": {
+          "api": "./server/imports"
+        }
+      }
+    ]
+  ]
+}
