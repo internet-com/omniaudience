@@ -1,12 +1,12 @@
 import {Meteor} from 'meteor/meteor'
 import runJob from './runJob'
 import watchBlocks from './watchBlocks'
-const isLocal = true
+const isLocal = false
 
 const jobs = [
   {
     job: watchBlocks,
-    waitTime: 1000,
+    waitTime: 10000,
     timeout: 5 * 60 * 1000, // 5 minutos
     name: 'watchBlocks',
     should: 'watchBlocks'
