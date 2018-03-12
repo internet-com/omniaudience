@@ -53,6 +53,7 @@ Notifications will send you a POST request to the endpoint specified to the wall
 {
   "address": "1v5oc8QTdz4GUrvvWxGd1FaXDU62nkvRY",
   "amount": 998919,
+  "confirmations": 2,
   "confirmed": false
 }
 ```
