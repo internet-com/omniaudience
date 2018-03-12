@@ -15,6 +15,10 @@ A Mongo Server is required for production usage. You have to set the Mongo_URL E
 
     MONGO_URL=mongodb://username:password@your-mongo-server-here.example.com:27015/database
 
+### Adding Currencies
+
+Adding currencies is easy. You must add a currency file in /server/imports/currencies/newCurrency.js and add it to the index.js file. Then add a document in the currencies collection with the parameters descried in /server/imports/collections/Currencies/Schema.js
+
 ### Subscribe address
 
 To start watching and address, POST data to your server, sending an address, notifyUrl and currency code.
