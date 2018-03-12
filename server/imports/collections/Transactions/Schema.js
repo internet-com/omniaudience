@@ -4,7 +4,7 @@ export default new SimpleSchema({
   txid: {
     type: String
   },
-  walletId: {
+  address: {
     type: String
   },
   blockHash: {
@@ -19,8 +19,12 @@ export default new SimpleSchema({
   amount: {
     type: Number
   },
-  notified: {
+  confirmed: {
     type: Boolean,
+    optional: true
+  },
+  confirmations: {
+    type: Number,
     optional: true
   },
   updatedAt: {

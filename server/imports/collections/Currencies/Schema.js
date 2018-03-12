@@ -27,5 +27,9 @@ export default new SimpleSchema({
   updatedAt: {
     type: Date,
     optional: true
+  },
+  active: {
+    type: Boolean,
+    optional: true
   }
 })

@@ -4,6 +4,8 @@ import {Block, address as Address} from 'bitcoinjs-lib'
 import Wallets from 'api/collections/Wallets'
 import Transactions from 'api/collections/Transactions'
 import CurrenciesDetails from 'api/currencies'
+import notifyTransactions from 'api/helpers/notifyTransactions'
+import each from 'lodash/each'
 
 export default async function(currencyCode, height) {
   console.log('Watching block', height)
@@ -28,6 +30,7 @@ export default async function(currencyCode, height) {
     }
     const txid = transaction.getId()
 
+    let tracking = {}
     for (const vout of transaction.outs) {
       const value = Number(vout.value)
       if (!value) {
@@ -38,20 +41,14 @@ export default async function(currencyCode, height) {
           vout.script,
           CurrenciesDetails[currency.name.toLowerCase()]
         )
-        const spent = !!vout.spentTxId
         const wallet = Wallets.findOne({address})
         if (wallet) {
           console.log('\nTransaction found to', address, value, '\n')
-          Transactions.insert({
-            txid,
-            blockHash,
-            blockHeight: height,
-            walletId: wallet._id,
-            currencyCode: currencyCode,
-            amount: value,
-            address,
-            spent
-          })
+          if (!tracking[address]) {
+            tracking[address] = Number(value) || 0
+          } else {
+            tracking[address] += Number(value) || 0
+          }
         }
       } catch (e) {
         console.log(value)
@@ -59,6 +56,17 @@ export default async function(currencyCode, height) {
         continue
       }
     }
+    each(tracking, (value, index) => {
+      Transactions.insert({
+        txid,
+        blockHash,
+        blockHeight: height,
+        currencyCode: currencyCode,
+        amount: value,
+        address: index
+      })
+    })
   }
+  await notifyTransactions(currency.code, height)
   Currencies.update(currency._id, {$set: {updatedAt: new Date(), latestBlockNumber: height}})
 }

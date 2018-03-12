@@ -1,7 +1,6 @@
 import Currencies from 'api/collections/Currencies'
 import getBlockchainHeight from 'api/helpers/getBlockchainHeight'
 import updateBlockchainData from 'api/helpers/updateBlockchainData'
-import notifyTransactions from 'api/helpers/notifyTransactions'
 
 export default async function() {
   const currencies = Currencies.find({active: true}).fetch()
@@ -14,10 +13,6 @@ export default async function() {
       continue
     }
     for (var i = currency.latestBlockNumber; i <= height; i++) {
-      await notifyTransactions(
-        currency.code,
-        currency.latestBlockNumber - (currency.requiredConfirmations - 1)
-      )
       await updateBlockchainData(currency.code, i)
     }
   }
