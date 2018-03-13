@@ -7,9 +7,10 @@ const jobs = [
   {
     job: watchBlocks,
     waitTime: 10000,
-    timeout: 5 * 60 * 1000, // 5 minutos
+    timeout: 3 * 60 * 1000, // 3 minutos
     name: 'watchBlocks',
-    should: 'watchBlocks'
+    should: 'watchBlocks',
+    concurrency: 2
   }
 ]
 

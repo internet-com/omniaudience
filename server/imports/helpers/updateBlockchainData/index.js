@@ -66,5 +66,7 @@ export default async function(currencyCode, height) {
     })
   }
   await notifyTransactions(currency.code, height)
-  Currencies.update(currency._id, {$set: {updatedAt: new Date(), latestBlockNumber: height}})
+  Currencies.update(currency._id, {
+    $set: {updatedAt: new Date(), latestBlockNumber: height}
+  })
 }

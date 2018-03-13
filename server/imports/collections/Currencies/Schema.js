@@ -31,5 +31,9 @@ export default new SimpleSchema({
   active: {
     type: Boolean,
     optional: true
+  },
+  updating: {
+    type: Boolean,
+    optional: true
   }
 })
