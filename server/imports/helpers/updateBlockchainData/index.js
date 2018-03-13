@@ -51,8 +51,6 @@ export default async function(currencyCode, height) {
           }
         }
       } catch (e) {
-        console.log(value)
-        console.log(e)
         continue
       }
     }

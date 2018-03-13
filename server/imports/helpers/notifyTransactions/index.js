@@ -20,23 +20,27 @@ export default async function(currencyCode) {
       continue
     }
     const confirmed = confirmations >= currency.requiredConfirmations
-    await rp({
-      uri: wallet.notifyUrl,
-      method: 'POST',
-      json: true,
-      body: {
-        address: wallet.address,
-        amount: transaction.amount,
-        confirmed,
-        confirmations
-      }
-    })
-    Transactions.update(transaction._id, {
-      $set: {
-        confirmed,
-        confirmations,
-        updatedAt: new Date()
-      }
-    })
+    try {
+      await rp({
+        uri: wallet.notifyUrl,
+        method: 'POST',
+        json: true,
+        body: {
+          address: wallet.address,
+          amount: transaction.amount,
+          confirmed,
+          confirmations
+        }
+      })
+      Transactions.update(transaction._id, {
+        $set: {
+          confirmed,
+          confirmations,
+          updatedAt: new Date()
+        }
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 }
