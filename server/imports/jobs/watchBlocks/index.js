@@ -6,7 +6,9 @@ export default async function() {
   const currency = Currencies.findAndModify({
     query: {
       active: true,
-      updating: {$ne: true}
+      updating: {
+        $ne: true
+      }
     },
     update: {
       $set: {updating: true}
