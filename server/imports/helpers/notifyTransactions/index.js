@@ -41,6 +41,7 @@ export default async function(currencyCode) {
       })
     } catch (e) {
       console.log(e)
+      continue
     }
   }
 }
