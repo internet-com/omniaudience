@@ -25,8 +25,7 @@ export default async function() {
     console.log(`No new blocks on ${currency.name}\n`)
     return
   }
-  for (var i = currency.latestBlockNumber; i <= height; i++) {
-    await updateBlockchainData(currency.code, i)
-  }
-  Currencies.update(currency._id, {$set: {updating: false}})
+
+  await updateBlockchainData(currency.code, currency.latestBlockNumber + 1)
+  Currencies.update(currency._id, {$set: {updating: false, updatedAt: new Date()}})
 }

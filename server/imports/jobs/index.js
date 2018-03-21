@@ -6,7 +6,7 @@ const isLocal = false
 const jobs = [
   {
     job: watchBlocks,
-    waitTime: 10000,
+    waitTime: 500,
     timeout: 3 * 60 * 1000, // muchos minutos
     name: 'watchBlocks',
     should: 'watchBlocks'
