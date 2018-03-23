@@ -23,6 +23,7 @@ export default async function() {
   console.log(height, currency.latestBlockNumber)
   if (height <= currency.latestBlockNumber) {
     console.log(`No new blocks on ${currency.name}\n`)
+    Currencies.update(currency._id, {$set: {updating: false, updatedAt: new Date()}})
     return
   }
 
