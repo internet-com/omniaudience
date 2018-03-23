@@ -40,6 +40,13 @@ export default async function(currencyCode) {
         }
       })
     } catch (e) {
+      Transactions.update(transaction._id, {
+        $set: {
+          confirmed,
+          confirmations,
+          updatedAt: new Date()
+        }
+      })
       console.log(e)
       continue
     }
