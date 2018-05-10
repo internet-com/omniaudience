@@ -1,7 +1,7 @@
 import Currencies from 'api/collections/Currencies'
 import getBlockchainHeight from 'api/helpers/getBlockchainHeight'
 import updateBlockchainData from 'api/helpers/updateBlockchainData'
-import moment from 'momentjs'
+import moment from 'moment'
 
 export default async function() {
   const currency = Currencies.findAndModify({
