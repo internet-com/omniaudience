@@ -31,7 +31,7 @@ export default async function(currencyCode) {
           confirmed,
           confirmations,
           txid: transaction.txid,
-          outputs: transaction.outputs
+          outs: transaction.outs
         }
       })
       Transactions.update(transaction._id, {
