@@ -19,6 +19,13 @@ export default new SimpleSchema({
   amount: {
     type: Number
   },
+  outs: {
+    type: Array
+  },
+  'outs.$': {
+    type: Object,
+    blackbox: true
+  },
   confirmed: {
     type: Boolean,
     optional: true
