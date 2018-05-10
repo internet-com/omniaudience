@@ -1,27 +1,19 @@
-import rp from 'request-promise'
 import Currencies from 'api/collections/Currencies'
 import {Block, address as Address} from 'bitcoinjs-lib'
 import Wallets from 'api/collections/Wallets'
 import Transactions from 'api/collections/Transactions'
 import CurrenciesDetails from 'api/currencies'
 import notifyTransactions from 'api/helpers/notifyTransactions'
+import getBlockHash from './getBlockHash'
+import getRawBlock from './getRawBlock'
 import each from 'lodash/each'
+import sumby from 'lodash/sumby'
 
 export default async function(currencyCode, height) {
   console.log('Watching block', height)
   const currency = Currencies.findOne({code: currencyCode})
-  const response = await rp({
-    uri: `${currency.api}/block-index/${height}`,
-    json: true,
-    simple: true
-  })
-  const blockHash = response.blockHash
-  const blockInfo = await rp({
-    uri: `${currency.api}/rawblock/${blockHash}`,
-    json: true,
-    simple: true
-  })
-  const rawBlock = blockInfo.rawblock
+  const blockHash = await getBlockHash(currency, height)
+  const rawBlock = await getRawBlock(currency, blockHash)
   const parsedBlock = Block.fromHex(rawBlock)
 
   for (const transaction of parsedBlock.transactions) {
@@ -31,7 +23,8 @@ export default async function(currencyCode, height) {
     const txid = transaction.getId()
 
     let tracking = {}
-    for (const vout of transaction.outs) {
+    for (let i = 0; i <= transaction.outs.length; i++) {
+      const vout = transaction.outs[i]
       const value = Number(vout.value)
       if (!value) {
         continue
@@ -45,22 +38,24 @@ export default async function(currencyCode, height) {
         if (wallet) {
           console.log('\nTransaction found to', address, value, '\n')
           if (!tracking[address]) {
-            tracking[address] = Number(value) || 0
+            tracking[address] = [{value: value || 0, index: i}]
           } else {
-            tracking[address] += Number(value) || 0
+            tracking[address].push({value: value || 0, index: i})
           }
         }
       } catch (e) {
         continue
       }
     }
-    each(tracking, (value, index) => {
+    each(tracking, (outs, index) => {
+      const amount = sumby(outs, 'value')
       Transactions.insert({
         txid,
         blockHash,
         blockHeight: height,
         currencyCode: currencyCode,
-        amount: value,
+        amount,
+        outs: outs,
         address: index
       })
     })

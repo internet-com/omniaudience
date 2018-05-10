@@ -29,7 +29,9 @@ export default async function(currencyCode) {
           address: wallet.address,
           amount: transaction.amount,
           confirmed,
-          confirmations
+          confirmations,
+          txid: transaction.txid,
+          outputs: transaction.outputs
         }
       })
       Transactions.update(transaction._id, {
