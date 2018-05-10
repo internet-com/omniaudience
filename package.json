@@ -10,6 +10,7 @@
     "body-parser": "^1.18.2",
     "lodash": "^4.17.5",
     "meteor-node-stubs": "^0.3.2",
+    "moment": "^2.22.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "simpl-schema": "^1.4.2"
