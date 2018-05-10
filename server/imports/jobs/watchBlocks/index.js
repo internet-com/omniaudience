@@ -1,18 +1,26 @@
 import Currencies from 'api/collections/Currencies'
 import getBlockchainHeight from 'api/helpers/getBlockchainHeight'
 import updateBlockchainData from 'api/helpers/updateBlockchainData'
+import moment from 'momentjs'
 
 export default async function() {
   const currency = Currencies.findAndModify({
     query: {
       active: true,
-      updating: {
-        $ne: true
-      }
+      $or: [
+        {
+          workingAt: null
+        },
+        {
+          workingAt: {
+            $lte: moment()
+              .subtract(1, 'minutes')
+              .toDate()
+          }
+        }
+      ]
     },
-    update: {
-      $set: {updating: true}
-    },
+    update: {$set: {workingAt: new Date()}},
     sort: {updatedAt: 1}
   })
   if (!currency) {
@@ -23,10 +31,10 @@ export default async function() {
   console.log(height, currency.latestBlockNumber)
   if (height <= currency.latestBlockNumber) {
     console.log(`No new blocks on ${currency.name}\n`)
-    Currencies.update(currency._id, {$set: {updating: false, updatedAt: new Date()}})
+    Currencies.update(currency._id, {$set: {workingAt: null, updatedAt: new Date()}})
     return
   }
 
   await updateBlockchainData(currency.code, currency.latestBlockNumber + 1)
-  Currencies.update(currency._id, {$set: {updating: false, updatedAt: new Date()}})
+  Currencies.update(currency._id, {$set: {workingAt: null, updatedAt: new Date()}})
 }
