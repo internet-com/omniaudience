@@ -23,7 +23,7 @@ export default async function(currencyCode, height) {
     const txid = transaction.getId()
 
     let tracking = {}
-    for (let i = 0; i <= transaction.outs.length; i++) {
+    for (let i = 0; i < transaction.outs.length; i++) {
       const vout = transaction.outs[i]
       const value = Number(vout.value)
       if (!value) {
