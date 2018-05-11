@@ -26,6 +26,7 @@ export default async function(currencyCode) {
         method: 'POST',
         json: true,
         body: {
+          currency: transaction.currencyCode,
           address: wallet.address,
           amount: transaction.amount,
           confirmed,
