@@ -4,7 +4,11 @@ import Currencies from 'api/collections/Currencies'
 import rp from 'request-promise'
 import signRequest from './signRequest'
 
+/**
+ * Notifies transaction to the notifyUrl endpoint
+ */
 export default async function(currencyCode) {
+  // Notify all new transactions until they get confirmed
   const currency = Currencies.findOne({code: currencyCode})
   const transactions = Transactions.find({
     currencyCode,
@@ -15,7 +19,9 @@ export default async function(currencyCode) {
     const wallet = Wallets.findOne({address: transaction.address})
     if (!wallet) continue
 
+    // Find the confirmations for the transaction (plus one because when added to first block is first confirmation)
     const confirmations = currency.latestBlockNumber - transaction.blockHeight + 1
+    // Continue to next if no new progress is found (new blocks)
     if (confirmations === transaction.confirmations) {
       continue
     }
@@ -30,6 +36,8 @@ export default async function(currencyCode) {
         txid: transaction.txid,
         outs: transaction.outs
       }
+
+      // Sign requests for better security (avoid fraudulent requests)
       const timestamp = new Date().getTime() / 1000
       const signature = signRequest(JSON.stringify(body), timestamp)
       await rp({
@@ -42,6 +50,7 @@ export default async function(currencyCode) {
         json: true,
         body
       })
+
       Transactions.update(transaction._id, {
         $set: {
           confirmed,

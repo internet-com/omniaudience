@@ -16,37 +16,41 @@ export default async function(currencyCode, height) {
   const rawBlock = await getRawBlock(currency, blockHash)
   const parsedBlock = Block.fromHex(rawBlock)
 
+  // Pharse block transactions
   for (const transaction of parsedBlock.transactions) {
     if (!transaction.outs) {
       continue
     }
-    const txid = transaction.getId()
+    const txid = transaction.getId() // Transaction hash
 
     let tracking = {}
     for (let i = 0; i < transaction.outs.length; i++) {
       const vout = transaction.outs[i]
       const value = Number(vout.value)
-      if (!value) {
-        continue
-      }
+      if (!value) continue
       try {
         const address = Address.fromOutputScript(
           vout.script,
-          CurrenciesDetails[currency.name.toLowerCase()]
+          CurrenciesDetails[currency.name.toLowerCase()] // Currency information for decryption
         )
+
+        // Check if we are tracking this address
         const wallet = Wallets.findOne({address})
-        if (wallet) {
-          console.log('\nTransaction found to', address, value, '\n')
-          if (!tracking[address]) {
-            tracking[address] = [{value: value || 0, index: i}]
-          } else {
-            tracking[address].push({value: value || 0, index: i})
-          }
+        if (!wallet) continue
+
+        console.log('\nTransaction found to', address, value, '\n')
+        // Save transaction outputs
+        if (!tracking[address]) {
+          tracking[address] = [{value: value || 0, index: i}]
+        } else {
+          tracking[address].push({value: value || 0, index: i})
         }
       } catch (e) {
         continue
       }
     }
+
+    // Store transaction information in database
     each(tracking, (outs, index) => {
       const amount = sumby(outs, 'value')
       Transactions.insert({
@@ -60,7 +64,10 @@ export default async function(currencyCode, height) {
       })
     })
   }
+
+  // Notify found transactions
   await notifyTransactions(currency.code, height)
+
   Currencies.update(currency._id, {
     $set: {updatedAt: new Date(), latestBlockNumber: height}
   })

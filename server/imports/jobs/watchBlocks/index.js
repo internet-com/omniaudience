@@ -23,12 +23,15 @@ export default async function() {
     update: {$set: {workingAt: new Date()}},
     sort: {updatedAt: 1}
   })
+
   if (!currency) {
-    return 'No Blockchain tracked'
+    return 'This Blockchain is not being tracked'
   }
+
   console.log(`Watching Currency ${currency.name}`)
   const height = await getBlockchainHeight(currency.code)
-  console.log(height, currency.latestBlockNumber)
+
+  console.log('Blockchain height', height, 'Tracking height', currency.latestBlockNumber)
   if (height <= currency.latestBlockNumber) {
     console.log(`No new blocks on ${currency.name}\n`)
     Currencies.update(currency._id, {$set: {workingAt: null, updatedAt: new Date()}})
