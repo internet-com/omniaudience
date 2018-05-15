@@ -19,8 +19,9 @@ export default async function(currencyCode) {
     const wallet = Wallets.findOne({address: transaction.address})
     if (!wallet) continue
 
-    // Find the confirmations for the transaction (plus one because when added to first block is first confirmation)
-    const confirmations = currency.latestBlockNumber - transaction.blockHeight + 1
+    // Find the confirmations for the transaction (plus two because when added to first block is first confirmation)
+    const confirmations = currency.latestBlockNumber - transaction.blockHeight + 2
+
     // Continue to next if no new progress is found (new blocks)
     if (confirmations === transaction.confirmations) {
       continue
