@@ -7,7 +7,7 @@ import notifyTransactions from 'api/helpers/notifyTransactions'
 import getBlockHash from './getBlockHash'
 import getRawBlock from './getRawBlock'
 import each from 'lodash/each'
-import sumby from 'lodash/sumby'
+import sumby from 'lodash/sumBy'
 
 export default async function(currencyCode, height) {
   console.log('Watching block', height)
