@@ -10,7 +10,7 @@ import each from 'lodash/each'
 import sumby from 'lodash/sumBy'
 
 export default async function(currencyCode, height) {
-  console.log('Watching block', height)
+  console.log('Watching block', height, '\n')
   const currency = Currencies.findOne({code: currencyCode})
   const blockHash = await getBlockHash(currency, height)
   const rawBlock = await getRawBlock(currency, blockHash)
