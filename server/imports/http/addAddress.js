@@ -6,7 +6,7 @@ Picker.middleware(bodyParser.json())
 Picker.middleware(bodyParser.urlencoded({extended: false}))
 
 Picker.route('/addAddress', function(params, req, res, next) {
-  const {address, notifyUrl, currencyCode} = req.body
-  Wallets.update({address}, {$set: {address, notifyUrl, currencyCode}}, {upsert: true})
+  const {address, currencyCode} = req.body
+  Wallets.update({address}, {$set: {address, currencyCode}}, {upsert: true})
   res.end('done')
 })

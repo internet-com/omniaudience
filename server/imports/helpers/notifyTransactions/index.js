@@ -5,7 +5,7 @@ import rp from 'request-promise'
 import signRequest from './signRequest'
 
 /**
- * Notifies transaction to the notifyUrl endpoint
+ * Notifies transaction to the NOTIFY_URL endpoint
  */
 export default async function(currencyCode) {
   // Notify all new transactions until they get confirmed
@@ -42,7 +42,7 @@ export default async function(currencyCode) {
       const timestamp = new Date().getTime() / 1000
       const signature = signRequest(JSON.stringify(body), timestamp)
       await rp({
-        uri: wallet.notifyUrl,
+        uri: process.env.NOTIFY_URL,
         method: 'POST',
         headers: {
           'x-omniaudience-signature': signature,

@@ -8,10 +8,6 @@ export default new SimpleSchema({
   currencyCode: {
     type: String
   },
-  notifyUrl: {
-    type: String,
-    optional: true
-  },
   updatedAt: {
     type: Date,
     optional: true
