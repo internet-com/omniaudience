@@ -1,2 +1,0 @@
-export REQUEST_SECRET="347x26sjlMbDB5eFnb3w5ut1sa0eaJJZ"
-meteor
