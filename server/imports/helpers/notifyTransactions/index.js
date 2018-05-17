@@ -2,7 +2,7 @@ import Transactions from 'api/collections/Transactions'
 import Wallets from 'api/collections/Wallets'
 import Currencies from 'api/collections/Currencies'
 import rp from 'request-promise'
-import signRequest from './signRequest'
+import signRequest from 'api/helpers/signatures/signRequest'
 
 /**
  * Notifies transaction to the NOTIFY_URL endpoint
