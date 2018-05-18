@@ -11,5 +11,9 @@ export default new SimpleSchema({
   updatedAt: {
     type: Date,
     optional: true
+  },
+  createdAt: {
+    type: Date,
+    optional: true
   }
 })

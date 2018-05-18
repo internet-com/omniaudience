@@ -12,6 +12,6 @@ Picker.route('/addAddress', function(params, req, res, next) {
   }
 
   const {address, currencyCode} = req.body
-  Wallets.update({address}, {$set: {address, currencyCode}}, {upsert: true})
+  Wallets.update({address}, {$set: {address, currencyCode, createdAt: new Date()}}, {upsert: true})
   res.end('done')
 })
