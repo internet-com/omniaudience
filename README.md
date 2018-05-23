@@ -11,7 +11,7 @@ Omniaudience works by getting every block your node receives and checks if there
 ### Installation.
 
 This is a [Meteor](https://www.meteor.com) project. So it basically is installed the same way as any meteor project. [Orion Hosting](https://orion.hosting) recommended for faster deploying.
-A Mongo Server is required for production usage. You have to set the Mongo_URL Environment Variable
+A Mongo Server is required for production usage. You have to set the `MONGO_URL` Environment Variable
 
     MONGO_URL=mongodb://username:password@your-mongo-server-here.example.com:27015/database
 
