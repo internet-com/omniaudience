@@ -1,6 +1,5 @@
 import Currencies from 'api/collections/Currencies'
-import getBlockchainHeight from 'api/helpers/getBlockchainHeight'
-import updateBlockchainData from 'api/helpers/updateBlockchainData'
+import api from 'api/helpers/api'
 import moment from 'moment'
 
 export default async function() {
@@ -29,15 +28,10 @@ export default async function() {
   }
 
   console.log(`Watching Currency ${currency.name}`)
-  const height = await getBlockchainHeight(currency.code)
-
-  console.log('Blockchain height', height, 'Tracking height', currency.latestBlockNumber)
-  if (height <= currency.latestBlockNumber) {
-    console.log(`No new blocks on ${currency.name}\n`)
-    Currencies.update(currency._id, {$set: {workingAt: null, updatedAt: new Date()}})
-    return
+  try {
+    await api[currency.code](currency.code)
+  } catch (e) {
+    console.log(`ERROR Tracking ${currency.name}`, e)
   }
-
-  await updateBlockchainData(currency.code, currency.latestBlockNumber + 1)
   Currencies.update(currency._id, {$set: {workingAt: null, updatedAt: new Date()}})
 }

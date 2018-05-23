@@ -7,9 +7,6 @@ export default new SimpleSchema({
   address: {
     type: String
   },
-  blockHash: {
-    type: String
-  },
   blockHeight: {
     type: SimpleSchema.Integer
   },

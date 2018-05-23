@@ -1,37 +1,45 @@
 import Currencies from 'api/collections/Currencies'
-import {Block, address as Address} from 'bitcoinjs-lib'
+import {address as Address} from 'bitcoinjs-lib'
 import Wallets from 'api/collections/Wallets'
 import Transactions from 'api/collections/Transactions'
 import CurrenciesDetails from 'api/currencies'
 import notifyTransactions from 'api/helpers/notifyTransactions'
-import getBlockHash from './getBlockHash'
-import getRawBlock from './getRawBlock'
+import getParsedBlock from './getParsedBlock'
+import getBlockchainHeight from './getBlockchainHeight'
 import each from 'lodash/each'
 import sumby from 'lodash/sumBy'
 
-export default async function(currencyCode, height) {
-  console.log('Watching block', height, '\n')
+export default async function(currencyCode) {
   const currency = Currencies.findOne({code: currencyCode})
-  const blockHash = await getBlockHash(currency, height)
-  const rawBlock = await getRawBlock(currency, blockHash)
-  const parsedBlock = Block.fromHex(rawBlock)
+  const height = currency.latestBlockNumber + 1
+  const blockchainHeight = await getBlockchainHeight(currency.code)
 
-  // Pharse block transactions
+  // Check if update is needed
+  console.log('Blockchain height', blockchainHeight, 'Tracking height', height)
+  if (blockchainHeight <= currency.latestBlockNumber) {
+    console.log(`No new blocks on ${currency.name}\n`)
+    Currencies.update(currency._id, {$set: {workingAt: null, updatedAt: new Date()}})
+    return
+  }
+
+  console.log('Watching block', height, '\n')
+  const parsedBlock = await getParsedBlock(currency, height) // Get full parsed block
+
+  // Parse block transactions
   for (const transaction of parsedBlock.transactions) {
-    if (!transaction.outs) {
-      continue
-    }
-    const txid = transaction.getId() // Transaction hash
+    if (!transaction.outs) continue
 
+    // Hashmap to store all incomming outputs from transaction
     let tracking = {}
     for (let i = 0; i < transaction.outs.length; i++) {
       const vout = transaction.outs[i]
-      const value = Number(vout.value)
+      const value = parseInt(vout.value)
       if (!value) continue
+
       try {
         const address = Address.fromOutputScript(
           vout.script,
-          CurrenciesDetails[currency.name.toLowerCase()] // Currency information for decryption
+          CurrenciesDetails[currency.name.toLowerCase()] // network information for decryption
         )
 
         // Check if we are tracking this address
@@ -51,11 +59,11 @@ export default async function(currencyCode, height) {
     }
 
     // Store transaction information in database
+    const txid = transaction.getId() // Transaction hash
     each(tracking, (outs, index) => {
       const amount = sumby(outs, 'value')
       Transactions.insert({
         txid,
-        blockHash,
         blockHeight: height,
         currencyCode: currencyCode,
         amount,
