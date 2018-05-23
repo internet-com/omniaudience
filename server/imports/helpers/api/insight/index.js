@@ -3,7 +3,6 @@ import {address as Address} from 'bitcoinjs-lib'
 import Wallets from 'api/collections/Wallets'
 import Transactions from 'api/collections/Transactions'
 import CurrenciesDetails from 'api/currencies'
-import notifyTransactions from 'api/helpers/notifyTransactions'
 import getParsedBlock from './getParsedBlock'
 import getBlockchainHeight from './getBlockchainHeight'
 import each from 'lodash/each'
@@ -72,9 +71,6 @@ export default async function(currencyCode) {
       })
     })
   }
-
-  // Notify found transactions
-  await notifyTransactions(currency.code, height)
 
   Currencies.update(currency._id, {
     $set: {updatedAt: new Date(), latestBlockNumber: height}
