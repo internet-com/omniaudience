@@ -15,9 +15,15 @@ A Mongo Server is required for production usage. You have to set the Mongo_URL E
 
     MONGO_URL=mongodb://username:password@your-mongo-server-here.example.com:27015/database
 
-### Adding Currencies
+### Adding currencies
 
 Adding currencies is easy. You must add a currency file in /server/imports/currencies/newCurrency.js and add it to the index.js file. Then add a document in the currencies collection with the parameters descried in /server/imports/collections/Currencies/Schema.js
+
+### Request signature
+
+All Request have to be signed for Security Reasons. A signature is a hash sent in the header of the requests which has the encrypted body and timestamp with a secret key you specify in the `REQUEST_SECRET` Environment Variable. All incoming request (addAddress, removeAddress) have to be signed. This is to prevent external people to add addresses to your database. Also, you should check the signature of the notification request sent to your endpoint to prevent malicious users trying to add balance to their accounts. You can see the [Sign](https://github.com/orionsoft/omniaudience/blob/master/server/imports/helpers/signatures/signRequest.js) and [Check](https://github.com/orionsoft/omniaudience/blob/master/server/imports/helpers/signatures/checkSignature.js) algorithms in the code.
+
+Signature and timestamp have to be sent by `x-omniaudience-signature` and `x-omniaudience-timestamp` headers respectively.
 
 ### Subscribe address
 
@@ -28,16 +34,15 @@ To start watching and address, POST data to your server, sending an address, not
 ```json
 {
   "address": "1v5oc8QTdz4GUrvvWxGd1FaXDU62nkvRY",
-  "notifyUrl": "http://omniaudience.requestcatcher.com/test",
   "currencyCode": "BTC"
 }
 ```
 
 Response is simple: "done"
 
-### Delete Subscription
+### Delete subscription
 
-To delete a suscription, POST data to your server, sending an address to delete.
+To delete a subscription, POST data to your server, sending an address to delete.
 
 #### Example
 
@@ -58,10 +63,19 @@ Notifications will send you a POST request to the endpoint specified to the wall
   "address": "1v5oc8QTdz4GUrvvWxGd1FaXDU62nkvRY",
   "amount": 998919,
   "confirmations": 2,
-  "confirmed": false
+  "confirmed": false,
+  "txid": "39340d16ca69a6f904b666b93...",
+  "outs": [
+    {
+      "value": 2507787653.0,
+      "index": 0
+    }
+  ]
 }
 ```
 
-Amount is in satoshis format.
+##### About notifications
 
-Basically you will get 2 notifications for every transaction. The first one is when a transactions appears on a block and a second one when the transaction has been confirmed.
+* "amount" is in satoshis format.
+* You will get several notifications for every transaction. The first one is when a transactions appears on the first block, then when new confirmations appear and lastly when the transaction has been confirmed.
+* Outs are for storing incoming amounts to your wallet, so you can use them to create transactions.
