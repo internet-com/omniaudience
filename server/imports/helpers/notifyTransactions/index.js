@@ -1,8 +1,7 @@
 import Transactions from 'api/collections/Transactions'
 import Wallets from 'api/collections/Wallets'
 import Currencies from 'api/collections/Currencies'
-import rp from 'request-promise'
-import signRequest from 'api/helpers/signatures/signRequest'
+import notifyEndpoint from './notifyEndpoint'
 
 /**
  * Notifies transaction to the NOTIFY_URL endpoint
@@ -38,19 +37,8 @@ export default async function(currencyCode) {
         outs: transaction.outs
       }
 
-      // Sign requests for better security (avoid fraudulent requests)
-      const timestamp = new Date().getTime() / 1000
-      const signature = signRequest(JSON.stringify(body), timestamp)
-      await rp({
-        uri: process.env.NOTIFY_URL,
-        method: 'POST',
-        headers: {
-          'x-omniaudience-signature': signature,
-          'x-omniaudience-timestamp': timestamp
-        },
-        json: true,
-        body
-      })
+      // No await for asyncronous notification
+      notifyEndpoint(body)
 
       Transactions.update(transaction._id, {
         $set: {
